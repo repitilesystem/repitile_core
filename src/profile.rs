@@ -1,6 +1,6 @@
 use serde_derive;
 use toml;
-use std::io::{Read, Write, Error, ErrorKind};
+use std::io::{Read, Write};//, Error, ErrorKind};
 use std::fs::File;
 
 #[derive(Debug)]
@@ -10,7 +10,6 @@ pub enum ProfileError {
     LoadError,
     SaveError,
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Profile {
@@ -31,16 +30,34 @@ impl Default for Profile {
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct Temps {
     max: i32,
     min: i32,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+impl Default for Temps {
+    fn default() -> Temps {
+        Temps {
+            max: 85,
+            min: 75
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 struct Humidity {
     max: i32,
     min: i32,
+}
+
+impl Default for Humidity {
+    fn default() -> Humidity {
+        Humidity {
+            max: 85,
+            min: 75
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -51,7 +68,7 @@ struct Light {
 
 impl Default for Light {
     fn default() -> Light {
-        let light_str = "[light]\non = 00:00:00\noff = 12:00:00";
+        let light_str = "on = 00:00:00\noff = 12:00:00";
         toml::from_str(light_str).unwrap()
     }
 }
