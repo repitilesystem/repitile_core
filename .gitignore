@@ -2,3 +2,4 @@
 **/*.rs.bk
 transfer.sh
 profile.toml
+*.fmt
