@@ -3,7 +3,16 @@ name = "repitile_core"
 version = "0.1.0"
 authors = ["repitilesystem <repitilesystem@outlook.com>"]
 
+[lib]
+name = "repitile_core"
+path = "src/lib.rs"
+
+[[bin]]
+name = "TestProgram"
+path = "src/bin.rs"
+
 [dependencies]
 serde = "1.0"
 serde_derive = "1.0"
 toml = "0.4.5"
+sysfs_gpio = "0.5.1"
