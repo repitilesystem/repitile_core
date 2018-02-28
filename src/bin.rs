@@ -6,6 +6,7 @@ use repitile_core::sensor::Sensor;
 
 pub struct SimpleSensor {
     data_pin: Pin,
+    pub is_active: bool,
 }
 
 impl SimpleSensor {
@@ -13,25 +14,21 @@ impl SimpleSensor {
         let pin = Pin::new(pin);
         pin.export();
 
-        SimpleSensor { data_pin: pin }
+        SimpleSensor {
+            data_pin: pin,
+            is_active: false,
+        }
     }
-}
-
-pub struct SimpleSensorOutput {
-    pub is_active: bool,
 }
 
 impl Sensor for SimpleSensor {
-    type Output = Result<SimpleSensorOutput, Error>;
-    fn read(&self) -> Self::Output {
-        let data = self.data_pin.get_value()?;
+    fn read(&mut self) {
+        let data = self.data_pin.get_value().unwrap();
 
-        Ok(SimpleSensorOutput {
-            is_active: if data == 1 { true } else { false },
-        })
+        self.is_active = if data == 1 { true } else { false };
     }
 
-    fn temperatue(&self) -> u32 {
+    fn temperature(&self) -> u32 {
         85
     }
 
@@ -47,8 +44,8 @@ impl Drop for SimpleSensor {
 }
 
 fn main() {
-    let sensor = SimpleSensor::new(16);
-    let result = sensor.read().unwrap();
+    let mut sensor = SimpleSensor::new(16);
+    sensor.read();
 
-    println!("{:?}", result.is_active);
+    println!("{:?}", sensor.is_active);
 }

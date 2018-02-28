@@ -1,8 +1,8 @@
-use serde_derive;
 use toml;
-use std::io::{Read, Write};//, Error, ErrorKind};
+use std::io::{Read, Write}; //, Error, ErrorKind};
 use std::fs::File;
 
+/// Profile error possibilities
 #[derive(Debug)]
 pub enum ProfileError {
     DeserializationError,
@@ -11,12 +11,13 @@ pub enum ProfileError {
     SaveError,
 }
 
+/// `Profile` contains all the relevant information for a reptile environment.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Profile {
     name: String,
     temps: Temps,
     humidity: Humidity,
-    light: Light
+    light: Light,
 }
 
 impl Default for Profile {
@@ -25,11 +26,12 @@ impl Default for Profile {
             name: String::from("Default Reptile"),
             temps: Temps::default(),
             humidity: Humidity::default(),
-            light: Light::default()
+            light: Light::default(),
         }
     }
 }
 
+/// Describes the range for acceptable temperatures
 #[derive(Debug, Serialize, Deserialize)]
 struct Temps {
     max: i32,
@@ -38,13 +40,11 @@ struct Temps {
 
 impl Default for Temps {
     fn default() -> Temps {
-        Temps {
-            max: 85,
-            min: 75
-        }
+        Temps { max: 85, min: 75 }
     }
 }
 
+/// Describes the range for acceptable humidity
 #[derive(Debug, Serialize, Deserialize)]
 struct Humidity {
     max: i32,
@@ -53,13 +53,11 @@ struct Humidity {
 
 impl Default for Humidity {
     fn default() -> Humidity {
-        Humidity {
-            max: 85,
-            min: 75
-        }
+        Humidity { max: 85, min: 75 }
     }
 }
 
+/// Contains the times when the light should be on and off
 #[derive(Debug, Serialize, Deserialize)]
 struct Light {
     on: toml::value::Datetime,
@@ -86,24 +84,34 @@ impl Profile {
         (self.humidity.min, self.humidity.max)
     }
 
-    pub fn save_to_file<T: AsRef<::std::path::Path>>(&self, filename: T) -> Result<(), ProfileError> {
+    pub fn save_to_file<T: AsRef<::std::path::Path>>(
+        &self,
+        filename: T,
+    ) -> Result<(), ProfileError> {
         let serialized = toml::to_string(&self).map_err(|_| ProfileError::SerializationError)?;
         let mut save_file = File::create(filename).map_err(|_| ProfileError::SaveError)?;
 
-        save_file.write_all(serialized.as_bytes()).map_err(|_| ProfileError::SaveError)?;
+        save_file
+            .write_all(serialized.as_bytes())
+            .map_err(|_| ProfileError::SaveError)?;
 
         Ok(())
     }
 
-    pub fn read_from_file<T: AsRef<::std::path::Path>>(filename: T) -> Result<Profile, ProfileError> {
+    pub fn read_from_file<T: AsRef<::std::path::Path>>(
+        filename: T,
+    ) -> Result<Profile, ProfileError> {
         let mut contents = String::new();
 
         let mut read_file = File::open(filename).map_err(|_| ProfileError::LoadError)?;
 
-        read_file.read_to_string(&mut contents).map_err(|_| ProfileError::SaveError)?;
-        
-        let deserialized = toml::from_str::<Profile>(&contents).map_err(|_| ProfileError::DeserializationError)?;
-        
+        read_file
+            .read_to_string(&mut contents)
+            .map_err(|_| ProfileError::SaveError)?;
+
+        let deserialized =
+            toml::from_str::<Profile>(&contents).map_err(|_| ProfileError::DeserializationError)?;
+
         Ok(deserialized)
     }
 }

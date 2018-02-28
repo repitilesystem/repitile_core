@@ -1,3 +1,5 @@
+/// Contains information related to the configuration for the system
 pub struct Configuration {
-    time_delay: u64,
+    /// The time delay in seconds to wait before updating the sensors
+    pub time_delay: u64,
 }
