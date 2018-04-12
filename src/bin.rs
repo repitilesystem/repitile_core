@@ -1,7 +1,7 @@
 extern crate repitile_core;
 extern crate sysfs_gpio;
 
-use sysfs_gpio::{Error, Pin};
+use sysfs_gpio::Pin;
 use repitile_core::sensor::Sensor;
 
 pub struct SimpleSensor {
@@ -12,7 +12,7 @@ pub struct SimpleSensor {
 impl SimpleSensor {
     pub fn new(pin: u64) -> SimpleSensor {
         let pin = Pin::new(pin);
-        pin.export();
+        pin.export().unwrap();
 
         SimpleSensor {
             data_pin: pin,
@@ -39,7 +39,7 @@ impl Sensor for SimpleSensor {
 
 impl Drop for SimpleSensor {
     fn drop(&mut self) {
-        self.data_pin.unexport();
+        self.data_pin.unexport().unwrap();
     }
 }
 

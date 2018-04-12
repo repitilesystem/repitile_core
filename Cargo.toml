@@ -8,7 +8,7 @@ name = "repitile_core"
 path = "src/lib.rs"
 
 [[bin]]
-name = "TestProgram"
+name = "test_program"
 path = "src/bin.rs"
 
 [dependencies]
@@ -19,3 +19,4 @@ sysfs_gpio = "0.5.1"
 timer = "0.2.0"
 lazy_static = "*"
 time = "0.1"
+chrono = "0.4"
